@@ -1,0 +1,336 @@
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local ScreenGui = Instance.new("ScreenGui")
+local LOL = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local UIGradient = Instance.new("UIGradient")
+local ImageLabel = Instance.new("ImageLabel")
+local UICorner_2 = Instance.new("UICorner")
+local Folder = Instance.new("Folder")
+local Dahood = Instance.new("TextButton")
+local UICorner_3 = Instance.new("UICorner")
+local JailBreak = Instance.new("TextButton")
+local UICorner_4 = Instance.new("UICorner")
+local HoodModded = Instance.new("TextButton")
+local UICorner_5 = Instance.new("UICorner")
+local PetSim = Instance.new("TextButton")
+local UICorner_6 = Instance.new("UICorner")
+local Doors = Instance.new("TextButton")
+local UICorner_7 = Instance.new("UICorner")
+local Arsenal = Instance.new("TextButton")
+local UICorner_8 = Instance.new("UICorner")
+local Folder_2 = Instance.new("Folder")
+local NATD = Instance.new("TextButton")
+local UICorner_9 = Instance.new("UICorner")
+local TOH = Instance.new("TextButton")
+local UICorner_10 = Instance.new("UICorner")
+local InfYeild = Instance.new("TextButton")
+local UICorner_11 = Instance.new("UICorner")
+local Dex = Instance.new("TextButton")
+local UICorner_12 = Instance.new("UICorner")
+local PL = Instance.new("TextButton")
+local UICorner_13 = Instance.new("UICorner")
+local BloxFruits = Instance.new("TextButton")
+local UICorner_14 = Instance.new("UICorner")
+local TextLabel = Instance.new("TextLabel")
+
+--Properties:
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.ResetOnSpawn = false
+
+LOL.Name = "LOL"
+LOL.Parent = ScreenGui
+LOL.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+LOL.Position = UDim2.new(0.313886374, 0, 0.25638178, 0)
+LOL.Size = UDim2.new(0, 471, 0, 438)
+
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = LOL
+
+UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(0, 0, 0)), ColorSequenceKeypoint.new(0.55, Color3.fromRGB(43, 43, 43)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(58, 58, 58))}
+UIGradient.Parent = LOL
+
+ImageLabel.Parent = LOL
+ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ImageLabel.BackgroundTransparency = 1.000
+ImageLabel.Position = UDim2.new(0.0712053254, 0, 0.0398066975, 0)
+ImageLabel.Size = UDim2.new(0, 95, 0, 95)
+ImageLabel.ZIndex = 2
+ImageLabel.Image = "rbxassetid://13656763254"
+
+UICorner_2.Parent = ImageLabel
+
+Folder.Parent = LOL
+
+Dahood.Name = "Dahood"
+Dahood.Parent = Folder
+Dahood.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Dahood.Position = UDim2.new(0.30864045, 0, 0.365296781, 0)
+Dahood.Size = UDim2.new(0, 94, 0, 70)
+Dahood.Font = Enum.Font.SourceSans
+Dahood.Text = "Dahood"
+Dahood.TextColor3 = Color3.fromRGB(255, 255, 255)
+Dahood.TextScaled = true
+Dahood.TextSize = 18.000
+Dahood.TextWrapped = true
+Dahood.MouseButton1Down:connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/compwnter/destiny/main/loader"))()
+end)
+
+UICorner_3.Parent = Dahood
+
+JailBreak.Name = "JailBreak"
+JailBreak.Parent = Folder
+JailBreak.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+JailBreak.Position = UDim2.new(0.0737691, 0, 0.365296781, 0)
+JailBreak.Size = UDim2.new(0, 94, 0, 70)
+JailBreak.Font = Enum.Font.SourceSans
+JailBreak.Text = "Jailbreak"
+JailBreak.TextColor3 = Color3.fromRGB(255, 255, 255)
+JailBreak.TextScaled = true
+JailBreak.TextSize = 21.000
+JailBreak.TextWrapped = true
+JailBreak.MouseButton1Down:connect(function()
+	loadstring(game:HttpGet("https://pastebin.com/raw/EwhSPRtn"))()
+end)
+
+UICorner_4.Parent = JailBreak
+
+HoodModded.Name = "HoodModded"
+HoodModded.Parent = Folder
+HoodModded.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+HoodModded.Position = UDim2.new(0.0737691, 0, 0.552511454, 0)
+HoodModded.Size = UDim2.new(0, 94, 0, 70)
+HoodModded.Font = Enum.Font.SourceSans
+HoodModded.Text = "HoodModded"
+HoodModded.TextColor3 = Color3.fromRGB(255, 255, 255)
+HoodModded.TextScaled = true
+HoodModded.TextSize = 21.000
+HoodModded.TextWrapped = true
+
+UICorner_5.Parent = HoodModded
+
+PetSim.Name = "PetSim"
+PetSim.Parent = Folder
+PetSim.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+PetSim.Position = UDim2.new(0.30864045, 0, 0.552511454, 0)
+PetSim.Size = UDim2.new(0, 94, 0, 70)
+PetSim.Font = Enum.Font.SourceSans
+PetSim.Text = "PetSimX"
+PetSim.TextColor3 = Color3.fromRGB(255, 255, 255)
+PetSim.TextScaled = true
+PetSim.TextSize = 21.000
+PetSim.TextWrapped = true
+PetSim.MouseButton1Down:connect(function()
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/acsu123/HOHO_H/main/Loading_UI'))()
+end)
+
+UICorner_6.Parent = PetSim
+
+Doors.Name = "Doors"
+Doors.Parent = Folder
+Doors.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Doors.Position = UDim2.new(0.0737691, 0, 0.748858452, 0)
+Doors.Size = UDim2.new(0, 94, 0, 70)
+Doors.Font = Enum.Font.SourceSans
+Doors.Text = "Doors"
+Doors.TextColor3 = Color3.fromRGB(255, 255, 255)
+Doors.TextScaled = true
+Doors.TextSize = 21.000
+Doors.TextWrapped = true
+Doors.MouseButton1Down:connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/KINGHUB01/BlackKing/main/BlackKing"))()
+end)
+
+UICorner_7.Parent = Doors
+
+Arsenal.Name = "Arsenal"
+Arsenal.Parent = Folder
+Arsenal.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Arsenal.Position = UDim2.new(0.30864045, 0, 0.748858452, 0)
+Arsenal.Size = UDim2.new(0, 94, 0, 70)
+Arsenal.Font = Enum.Font.SourceSans
+Arsenal.Text = "Arsenal"
+Arsenal.TextColor3 = Color3.fromRGB(255, 255, 255)
+Arsenal.TextScaled = true
+Arsenal.TextSize = 21.000
+Arsenal.TextWrapped = true
+Arsenal.MouseButton1Down:connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/MrPectable/MrPectable/main/MrPectable.lua"))()
+end)
+
+UICorner_8.Parent = Arsenal
+
+Folder_2.Parent = LOL
+
+NATD.Name = "NATD"
+NATD.Parent = Folder_2
+NATD.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+NATD.Position = UDim2.new(0.775731742, 0, 0.360730559, 0)
+NATD.Size = UDim2.new(0, 94, 0, 70)
+NATD.Font = Enum.Font.SourceSans
+NATD.Text = "Natural disasters"
+NATD.TextColor3 = Color3.fromRGB(255, 255, 255)
+NATD.TextScaled = true
+NATD.TextSize = 21.000
+NATD.TextWrapped = true
+NATD.MouseButton1Down:connect(function()
+	loadstring(game:HttpGet'https://raw.githubusercontent.com/RunDTM/ZeeroxHub/main/Loader.lua')()
+end)
+
+UICorner_9.Parent = NATD
+
+TOH.Name = "TOH"
+TOH.Parent = Folder_2
+TOH.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TOH.Position = UDim2.new(0.540860415, 0, 0.360730559, 0)
+TOH.Size = UDim2.new(0, 94, 0, 70)
+TOH.Font = Enum.Font.SourceSans
+TOH.Text = "TowerOfHell"
+TOH.TextColor3 = Color3.fromRGB(255, 255, 255)
+TOH.TextScaled = true
+TOH.TextSize = 21.000
+TOH.TextWrapped = true
+TOH.MouseButton1Down:Connect(function()
+	loadstring(game:HttpGet'https://raw.githubusercontent.com/RunDTM/ZeeroxHub/main/Loader.lua')()
+end)
+
+UICorner_10.Parent = TOH
+
+InfYeild.Name = "InfYeild"
+InfYeild.Parent = Folder_2
+InfYeild.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+InfYeild.Position = UDim2.new(0.775731742, 0, 0.547945261, 0)
+InfYeild.Size = UDim2.new(0, 94, 0, 70)
+InfYeild.Font = Enum.Font.SourceSans
+InfYeild.Text = "InfYeild"
+InfYeild.TextColor3 = Color3.fromRGB(255, 255, 255)
+InfYeild.TextScaled = true
+InfYeild.TextSize = 21.000
+InfYeild.TextWrapped = true
+InfYeild.MouseButton1Down:connect(function()
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+end)
+
+UICorner_11.Parent = InfYeild
+
+Dex.Name = "Dex"
+Dex.Parent = Folder_2
+Dex.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Dex.Position = UDim2.new(0.540860415, 0, 0.744292259, 0)
+Dex.Size = UDim2.new(0, 94, 0, 70)
+Dex.Font = Enum.Font.SourceSans
+Dex.Text = "Dex v3"
+Dex.TextColor3 = Color3.fromRGB(255, 255, 255)
+Dex.TextScaled = true
+Dex.TextSize = 21.000
+Dex.TextWrapped = true
+Dex.MouseButton1Down:connect(function()
+	loadstring(game:HttpGet'https://raw.githubusercontent.com/Neon-Fox/roblox-scripts/main/Dex-V3')()
+end)
+
+UICorner_12.Parent = Dex
+
+PL.Name = "PL"
+PL.Parent = Folder_2
+PL.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+PL.Position = UDim2.new(0.775731742, 0, 0.744292259, 0)
+PL.Size = UDim2.new(0, 94, 0, 70)
+PL.Font = Enum.Font.SourceSans
+PL.Text = "Lazarus"
+PL.TextColor3 = Color3.fromRGB(255, 255, 255)
+PL.TextScaled = true
+PL.TextSize = 21.000
+PL.TextWrapped = true
+PL.MouseButton1Down:connect(function()
+	loadstring(game:HttpGet("https://vicehub.cc/beta-scripts/Project_Lazarus.txt", "UwU"))("vicehub on top")
+end)
+
+UICorner_13.Parent = PL
+
+BloxFruits.Name = "BloxFruits"
+BloxFruits.Parent = Folder_2
+BloxFruits.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+BloxFruits.Position = UDim2.new(0.540860415, 0, 0.547945261, 0)
+BloxFruits.Size = UDim2.new(0, 94, 0, 70)
+BloxFruits.Font = Enum.Font.SourceSans
+BloxFruits.Text = "BloxFruits"
+BloxFruits.TextColor3 = Color3.fromRGB(255, 255, 255)
+BloxFruits.TextScaled = true
+BloxFruits.TextSize = 21.000
+BloxFruits.TextWrapped = true
+BloxFruits.MouseButton1Down:connect(function()
+	loadstring(game:HttpGet("https://luable.netlify.app/AlchemyHub/Luncher.script"))()
+end)
+
+UICorner_14.Parent = BloxFruits
+
+TextLabel.Parent = LOL
+TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.BackgroundTransparency = 1.000
+TextLabel.Position = UDim2.new(0.271762192, 0, 0.0684931502, 0)
+TextLabel.Size = UDim2.new(0, 324, 0, 68)
+TextLabel.Font = Enum.Font.SourceSansSemibold
+TextLabel.Text = "Gui hub"
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextScaled = true
+TextLabel.TextSize = 14.000
+TextLabel.TextWrapped = true
+
+-- Scripts:
+
+local function ZXVLDQ_fake_script() -- ImageLabel.LocalScript 
+	local script = Instance.new('LocalScript', ImageLabel)
+
+	--Made by TimmyLikesChez
+	
+	repeat wait() until game.Players.LocalPlayer.Character ~= nil
+	
+	local Player = game.Players.LocalPlayer
+	
+	local UserId = game.Players.LocalPlayer.UserId
+	local ThumbType = Enum.ThumbnailType.HeadShot
+	local ThumbSize = Enum.ThumbnailSize.Size420x420
+	
+	script.Parent.ImageLabel.Image = game.Players:GetUserThumbnailAsync(UserId,ThumbType,ThumbSize)
+end
+coroutine.wrap(ZXVLDQ_fake_script)()
+local function VHZY_fake_script() -- ScreenGui.LocalScript 
+	local script = Instance.new('LocalScript', ScreenGui)
+
+	frame = script.Parent.LOL
+	frame.Draggable = true
+	frame.Selectable = true
+	frame.Active = true
+end
+coroutine.wrap(VHZY_fake_script)()
+local function BHRKI_fake_script() -- ScreenGui.LocalScript 
+	local script = Instance.new('LocalScript', ScreenGui)
+
+	local FrameObject = script.Parent.LOL -- enter the name of your frame here
+	local Open = false
+	
+	
+	local UserInputService = game:GetService("UserInputService")
+	
+	UserInputService.InputBegan:Connect(function(Input, gameprocess)
+		if not gameprocess then
+			if Input.KeyCode == Enum.KeyCode.V then
+				if Open then
+					Open = false
+					script.Parent.LOL.Visible = true
+				else
+					Open = true
+					script.Parent.LOL.Visible = false
+				end
+			end
+		end
+	end)
+	
+end
+coroutine.wrap(BHRKI_fake_script)()
