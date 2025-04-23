@@ -4,26 +4,28 @@ local players_service = cloneref(game:GetService("Players"))
 local run_service = cloneref(game:GetService("RunService"))
 local user_input_service = game:GetService("UserInputService")
 
+local local_player = players_service.LocalPlayer
+
 -- UI Overlay Setup
 local screen_gui = Instance.new("ScreenGui")
-screen_gui.IgnoreGuiInset = true 
+screen_gui.IgnoreGuiInset = true
+screen_gui.Parent = local_player:WaitForChild("PlayerGui") -- Parent to PlayerGui instead of CoreGui
 
 local frame = Instance.new("Frame")
 local title = Instance.new("TextLabel")
 local health_label = Instance.new("TextLabel")
 
-screen_gui.Parent = game:GetService("CoreGui")
-
 frame.Parent = screen_gui
 frame.Size = UDim2.new(1, 0, 1, 0)
 frame.BackgroundColor3 = Color3.new(0, 0, 0)
-frame.Visible = false
+frame.Visible = false -- Hidden initially
 
 title.Parent = frame
 title.Size = UDim2.new(1, 0, 0.2, 0)
 title.BackgroundTransparency = 1
 title.TextScaled = true
 title.TextColor3 = Color3.new(1, 1, 1)
+title.Text = "Waiting for target..."
 
 health_label.Parent = frame
 health_label.Size = UDim2.new(1, 0, 0.1, 0)
@@ -31,6 +33,7 @@ health_label.Position = UDim2.new(0, 0, 0.2, 0)
 health_label.BackgroundTransparency = 1
 health_label.TextScaled = true
 health_label.TextColor3 = Color3.new(1, 1, 1)
+health_label.Text = "Health: N/A"
 
 -- Function to Find Player by Display Name
 local function find_player(display_name)
@@ -52,8 +55,11 @@ local function set_target()
     
     if target_player then
         set_ragebot_target(target_player)
+        frame.Visible = true -- Ensure UI appears when a target is found
+        title.Text = "Target: " .. target_player.DisplayName
         print("Target set to: " .. target_player.DisplayName)
     else
+        frame.Visible = false -- Hide UI if no target is found
         print("Target not found: " .. _G.RagebotConfig.target)
     end
 end
