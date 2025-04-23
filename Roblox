@@ -1,20 +1,18 @@
 local juju = juju
-local set_ragebot_target = juju and juju["set_ragebot_target"]
+local set_ragebot_target = juju["set_ragebot_target"]
 local players_service = cloneref(game:GetService("Players"))
 local run_service = cloneref(game:GetService("RunService"))
 local user_input_service = game:GetService("UserInputService")
 
-local local_player = players_service.LocalPlayer
-
 -- >> UI Overlay Setup
 local screen_gui = Instance.new("ScreenGui")
-screen_gui.IgnoreGuiInset = true
-screen_gui.Parent = game:GetService("CoreGui") -- Can be changed to local_player.PlayerGui for better visibility
+screen_gui.IgnoreGuiInset = true 
 
 local frame = Instance.new("Frame")
 local title = Instance.new("TextLabel")
 local health_label = Instance.new("TextLabel")
-local imageLabel = Instance.new("ImageLabel") -- ImageLabel for loading screen
+
+screen_gui.Parent = game:GetService("CoreGui")
 
 frame.Parent = screen_gui
 frame.Size = UDim2.new(1, 0, 1, 0)
@@ -26,7 +24,6 @@ title.Size = UDim2.new(1, 0, 0.2, 0)
 title.BackgroundTransparency = 1
 title.TextScaled = true
 title.TextColor3 = Color3.new(1, 1, 1)
-title.Text = "Waiting for target..."
 
 health_label.Parent = frame
 health_label.Size = UDim2.new(1, 0, 0.1, 0)
@@ -34,18 +31,32 @@ health_label.Position = UDim2.new(0, 0, 0.2, 0)
 health_label.BackgroundTransparency = 1
 health_label.TextScaled = true
 health_label.TextColor3 = Color3.new(1, 1, 1)
-health_label.Text = "Health: N/A"
 
--- Loading Image Setup
-imageLabel.Parent = frame
-imageLabel.Size = UDim2.new(1, 0, 1, 0) -- Fullscreen size
-imageLabel.Position = UDim2.new(0, 0, 0, 0) -- Top-left corner
-imageLabel.BackgroundTransparency = 1
-imageLabel.ImageTransparency = 0.5
-imageLabel.Image = "rbxassetid://83865652412880" -- Asset ID
+-- >> Optimization Function
+local function do_gfx()
+    if not setfpscap then return end
 
--- Function to Find Player by Display Name
-local function find_player(display_name)
+    user_input_service.WindowFocusReleased:Connect(function()
+        run_service:Set3dRenderingEnabled(false)
+        setfpscap(25)
+    end)
+
+    user_input_service.WindowFocused:Connect(function()
+        run_service:Set3dRenderingEnabled(true)
+        setfpscap(360)
+    end)
+
+    task.wait(1)
+
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v:IsA("Part") or v:IsA("SpawnLocation") or v:IsA("WedgePart") or v:IsA("Terrain") or v:IsA("MeshPart") then
+            v.Material = Enum.Material.Plastic
+        end
+    end
+end
+
+-- >> Find Target by Display Name
+local function find_player_by_display_name(display_name)
     for _, player in ipairs(players_service:GetPlayers()) do
         if player.DisplayName == display_name then
             return player
@@ -54,26 +65,18 @@ local function find_player(display_name)
     return nil
 end
 
--- Function to Set Ragebot Target Dynamically
-local function set_target()
-    if not set_ragebot_target then
-        return print("Error: set_ragebot_target function missing!")
-    end
-    
-    local target_player = find_player(_G.RagebotConfig.target)
-    
+local function set_target_by_display_name(display_name)
+    local target_player = find_player_by_display_name(display_name)
+
     if target_player then
         set_ragebot_target(target_player)
-        frame.Visible = true -- Ensure UI appears when a target is found
-        title.Text = "Target: " .. target_player.DisplayName
-        print("Target set to: " .. target_player.DisplayName)
+        print("Ragebot target set to: " .. target_player.DisplayName .. " (" .. target_player.Name .. ")")
     else
-        frame.Visible = false -- Hide UI if no target is found
-        print("Target not found: " .. _G.RagebotConfig.target)
+        print("Target not found!")
     end
 end
 
--- Health Tracking Function
+-- >> Health Tracking
 local function update_health(target_player)
     if target_player.Character then
         local humanoid = target_player.Character:FindFirstChildOfClass("Humanoid")
@@ -87,7 +90,6 @@ local function update_health(target_player)
     end
 end
 
--- Monitor Character Health Changes
 local function on_character_added(new_character, target_player)
     local humanoid = new_character:FindFirstChildOfClass("Humanoid")
     if humanoid then
@@ -98,44 +100,42 @@ local function on_character_added(new_character, target_player)
     end
 end
 
--- Command Listener for Authorized Users
-local function listen_for_commands()
-    local function chat_listener(player)
-        player.Chatted:Connect(function(message)
-            local args = message:lower():gsub("%s+", ""):split(" ")
+-- >> Chat Command Listener
+local function chat_listener(player)
+    player.Chatted:Connect(function(message)
+        local args = message:lower():gsub("%s+", ""):split(" ")
 
-            -- Kill Switch Command
-            if args[1] == ".stop" and table.find(_G.RagebotConfig.authorized_users, player.Name) then
-                set_ragebot_target(nil)
-                screen_gui:Destroy()
-                print("Script stopped by " .. player.Name)
-            end
+        -- Kill Switch Command
+        if args[1] == ".stop" and table.find(_G.Config.users, player.Name) then
+            set_ragebot_target(nil)
+            screen_gui:Destroy()
+            run_service:Set3dRenderingEnabled(true)
+            setfpscap(360)
+            print("Authorized user " .. player.Name .. " stopped the script!")
+        end
 
-            -- Change Target Command
-            if args[1] == ".target" and args[2] and table.find(_G.RagebotConfig.authorized_users, player.Name) then
-                _G.RagebotConfig.target = args[2]
-                set_target()
-                print("Target changed by " .. player.Name .. " to " .. args[2])
-            end
-        end)
-    end
-
-    -- Connect existing players
-    for _, player in ipairs(players_service:GetPlayers()) do
-        chat_listener(player)
-    end
-
-    -- Connect new players
-    players_service.PlayerAdded:Connect(chat_listener)
+        -- Target Change Command
+        if args[1] == ".target" and args[2] and table.find(_G.Config.users, player.Name) then
+            set_target_by_display_name(args[2])
+            print("Authorized user " .. player.Name .. " set target to " .. args[2])
+        end
+    end)
 end
 
--- Initialize
-listen_for_commands()
-set_target()
+-- >> Connect Chat Listener for Existing Players
+for _, player in ipairs(players_service:GetPlayers()) do
+    chat_listener(player)
+end
 
--- Cleanup
+-- >> Connect Chat Listener for New Players
+players_service.PlayerAdded:Connect(chat_listener)
+
+-- >> Set Initial Target from Config
+set_target_by_display_name(_G.Config.target_display_name)
+
+-- >> Cleanup on Unload
 juju["on_unload"](function()
     set_ragebot_target(nil)
     screen_gui:Destroy()
-    print("Ragebot script unloaded.")
+    print("Ragebot target selection script unloaded.")
 end)
