@@ -6,14 +6,15 @@ local user_input_service = game:GetService("UserInputService")
 
 local local_player = players_service.LocalPlayer
 
--- UI Overlay Setup
+-- >> UI Overlay Setup
 local screen_gui = Instance.new("ScreenGui")
 screen_gui.IgnoreGuiInset = true
-screen_gui.Parent = local_player:WaitForChild("PlayerGui") -- Parent to PlayerGui instead of CoreGui
+screen_gui.Parent = game:GetService("CoreGui") -- Can be changed to local_player.PlayerGui for better visibility
 
 local frame = Instance.new("Frame")
 local title = Instance.new("TextLabel")
 local health_label = Instance.new("TextLabel")
+local imageLabel = Instance.new("ImageLabel") -- ImageLabel for loading screen
 
 frame.Parent = screen_gui
 frame.Size = UDim2.new(1, 0, 1, 0)
@@ -34,6 +35,14 @@ health_label.BackgroundTransparency = 1
 health_label.TextScaled = true
 health_label.TextColor3 = Color3.new(1, 1, 1)
 health_label.Text = "Health: N/A"
+
+-- Loading Image Setup
+imageLabel.Parent = frame
+imageLabel.Size = UDim2.new(1, 0, 1, 0) -- Fullscreen size
+imageLabel.Position = UDim2.new(0, 0, 0, 0) -- Top-left corner
+imageLabel.BackgroundTransparency = 1
+imageLabel.ImageTransparency = 0.5
+imageLabel.Image = "rbxassetid://83865652412880" -- Asset ID
 
 -- Function to Find Player by Display Name
 local function find_player(display_name)
@@ -61,6 +70,31 @@ local function set_target()
     else
         frame.Visible = false -- Hide UI if no target is found
         print("Target not found: " .. _G.RagebotConfig.target)
+    end
+end
+
+-- Health Tracking Function
+local function update_health(target_player)
+    if target_player.Character then
+        local humanoid = target_player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            health_label.Text = "Health: " .. tostring(math.floor(humanoid.Health))
+        else
+            health_label.Text = "Health: N/A"
+        end
+    else
+        health_label.Text = "Health: Dead"
+    end
+end
+
+-- Monitor Character Health Changes
+local function on_character_added(new_character, target_player)
+    local humanoid = new_character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+            update_health(target_player)
+        end)
+        update_health(target_player)
     end
 end
 
