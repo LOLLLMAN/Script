@@ -5,9 +5,6 @@ local players_service = cloneref(game:GetService("Players"))
 local run_service = cloneref(game:GetService("RunService"))
 local user_input_service = game:GetService("UserInputService")
 
--- >> Sentry State
-local sentry_active = false
-
 -- >> UI Overlay Setup
 local function setup_ui()
     local screen_gui = Instance.new("ScreenGui")
@@ -118,7 +115,7 @@ end
 
 -- >> Sentry Mode Logic
 local function enable_sentry_mode(auth_user)
-    sentry_active = true
+    local sentry_active = true
 
     -- Set the authorized user as the legitbot target
     set_legitbot_target(auth_user)
@@ -179,14 +176,11 @@ local function chat_listener(player)
 
         -- Kill Switch Command
         if args[1] == ".stop" and table.find(_G.Config.users, player.Name) then
-            -- Disable sentry mode if active
-            sentry_active = false
             set_ragebot_target(nil)
-            set_legitbot_target(nil)
             screen_gui:Destroy()
             run_service:Set3dRenderingEnabled(true)
             setfpscap(360)
-            print("[INFO] Authorized user " .. player.Name .. " stopped the script and disabled sentry mode!")
+            print("[INFO] Authorized user " .. player.Name .. " stopped the script!")
         end
 
         -- Target Change Command
@@ -215,8 +209,6 @@ set_target_by_display_name(_G.Config.target_display_name)
 
 -- >> Cleanup on Unload
 juju["on_unload"](function()
-    -- Disable sentry mode if active
-    sentry_active = false
     set_ragebot_target(nil)
     set_legitbot_target(nil)
     screen_gui:Destroy()
