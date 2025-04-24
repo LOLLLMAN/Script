@@ -1,103 +1,172 @@
 local juju = juju
 local set_ragebot_target = juju["set_ragebot_target"]
+local set_legitbot_target = juju["set_legitbot_target"]
 local players_service = cloneref(game:GetService("Players"))
 local run_service = cloneref(game:GetService("RunService"))
 local user_input_service = game:GetService("UserInputService")
 
 -- >> UI Overlay Setup
-local screen_gui = Instance.new("ScreenGui")
-screen_gui.IgnoreGuiInset = true 
+local function setup_ui()
+    local screen_gui = Instance.new("ScreenGui")
+    screen_gui.IgnoreGuiInset = true 
 
-local frame = Instance.new("Frame")
-local title = Instance.new("TextLabel")
-local health_label = Instance.new("TextLabel")
+    local frame = Instance.new("Frame")
+    local title = Instance.new("TextLabel")
+    local health_label = Instance.new("TextLabel")
 
-screen_gui.Parent = game:GetService("CoreGui")
+    screen_gui.Parent = game:GetService("CoreGui")
 
-frame.Parent = screen_gui
-frame.Size = UDim2.new(1, 0, 1, 0)
-frame.BackgroundColor3 = Color3.new(0, 0, 0)
-frame.Visible = false -- Hidden initially
+    frame.Parent = screen_gui
+    frame.Size = UDim2.new(1, 0, 1, 0)
+    frame.BackgroundColor3 = Color3.new(0, 0, 0)
+    frame.Visible = false -- Hidden initially
 
-title.Parent = frame
-title.Size = UDim2.new(1, 0, 0.2, 0)
-title.BackgroundTransparency = 1
-title.TextScaled = true
-title.TextColor3 = Color3.new(1, 1, 1)
+    title.Parent = frame
+    title.Size = UDim2.new(1, 0, 0.2, 0)
+    title.BackgroundTransparency = 1
+    title.TextScaled = true
+    title.TextColor3 = Color3.new(1, 1, 1)
 
-health_label.Parent = frame
-health_label.Size = UDim2.new(1, 0, 0.1, 0)
-health_label.Position = UDim2.new(0, 0, 0.2, 0)
-health_label.BackgroundTransparency = 1
-health_label.TextScaled = true
-health_label.TextColor3 = Color3.new(1, 1, 1)
+    health_label.Parent = frame
+    health_label.Size = UDim2.new(1, 0, 0.1, 0)
+    health_label.Position = UDim2.new(0, 0, 0.2, 0)
+    health_label.BackgroundTransparency = 1
+    health_label.TextScaled = true
+    health_label.TextColor3 = Color3.new(1, 1, 1)
+    
+    return screen_gui, frame, health_label
+end
+
+local screen_gui, frame, health_label = setup_ui()
 
 -- >> Optimization Function
 local function do_gfx()
-    if not setfpscap then return end
+    if not setfpscap then
+        warn("[ERROR] setfpscap is not available!")
+        return
+    end
 
-    user_input_service.WindowFocusReleased:Connect(function()
+    -- Variables for FPS caps
+    local low_fps_cap = 25
+    local high_fps_cap = 360
+    local render_enabled = true
+
+    -- Handle window focus events
+    local focus_released_connection = user_input_service.WindowFocusReleased:Connect(function()
         run_service:Set3dRenderingEnabled(false)
-        setfpscap(25)
+        setfpscap(low_fps_cap)
+        render_enabled = false
+        print("[INFO] Graphics reduced: Window focus lost.")
     end)
 
-    user_input_service.WindowFocused:Connect(function()
+    local focus_gained_connection = user_input_service.WindowFocused:Connect(function()
         run_service:Set3dRenderingEnabled(true)
-        setfpscap(360)
+        setfpscap(high_fps_cap)
+        render_enabled = true
+        print("[INFO] Graphics restored: Window focus regained.")
     end)
 
-    task.wait(1)
-
-    for _, v in pairs(workspace:GetDescendants()) do
-        if v:IsA("Part") or v:IsA("SpawnLocation") or v:IsA("WedgePart") or v:IsA("Terrain") or v:IsA("MeshPart") then
-            v.Material = Enum.Material.Plastic
+    -- Reduce materials asynchronously
+    task.defer(function()
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v:IsA("BasePart") then
+                task.defer(function()
+                    v.Material = Enum.Material.Plastic
+                end)
+            end
         end
-    end
+        print("[INFO] Workspace materials optimized.")
+    end)
+
+    -- Cleanup connections on script unload
+    juju.on_unload(function()
+        if focus_released_connection then
+            focus_released_connection:Disconnect()
+        end
+        if focus_gained_connection then
+            focus_gained_connection:Disconnect()
+        end
+        print("[INFO] Optimization connections cleaned up.")
+    end)
 end
 
--- >> Find Target by Display Name
-local function find_player_by_display_name(display_name)
+-- >> Check if Player is Authorized
+local function is_player_authorized(player_name)
+    return table.find(_G.Config.users, player_name) ~= nil
+end
+
+-- >> Find Closest Player
+local function find_closest_player(position, range, ignore_user)
+    local closest_player = nil
+    local closest_distance = range
+
     for _, player in ipairs(players_service:GetPlayers()) do
-        if player.DisplayName == display_name then
-            return player
+        if player ~= players_service.LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local distance = (player.Character.HumanoidRootPart.Position - position).Magnitude
+            if distance < closest_distance and player ~= ignore_user then
+                closest_player = player
+                closest_distance = distance
+            end
         end
     end
-    return nil
+
+    return closest_player
 end
 
-local function set_target_by_display_name(display_name)
-    local target_player = find_player_by_display_name(display_name)
+-- >> Sentry Mode Logic
+local function enable_sentry_mode(auth_user)
+    local sentry_active = true
 
-    if target_player then
-        set_ragebot_target(target_player)
-        print("Ragebot target set to: " .. target_player.DisplayName .. " (" .. target_player.Name .. ")")
-    else
-        print("Target not found!")
-    end
-end
+    -- Set the authorized user as the legitbot target
+    set_legitbot_target(auth_user)
+    print("[INFO] Sentry mode enabled for authorized user: " .. auth_user.Name)
 
--- >> Health Tracking
-local function update_health(target_player)
-    if target_player.Character then
-        local humanoid = target_player.Character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            health_label.Text = "Health: " .. tostring(math.floor(humanoid.Health))
+    -- Continuous loop for sentry behavior
+    while sentry_active do
+        task.wait(0.1) -- Throttle loop execution
+
+        if not auth_user or not auth_user.Character or not auth_user.Character:FindFirstChild("HumanoidRootPart") then
+            print("[ERROR] Authorized user's character is missing or invalid!")
+            break
+        end
+
+        -- Teleport under the authorized user
+        if players_service.LocalPlayer.Character and players_service.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            players_service.LocalPlayer.Character.HumanoidRootPart.CFrame = auth_user.Character.HumanoidRootPart.CFrame * CFrame.new(0, -3, 0)
+        end
+
+        -- Find and target the closest player
+        local closest_player = find_closest_player(auth_user.Character.HumanoidRootPart.Position, _G.Config.sentry_range, auth_user)
+        if closest_player then
+            if is_player_authorized(closest_player.Name) then
+                -- If the bot accidentally targets the authorized user, stop
+                print("[WARNING] Attempted to target an authorized user. Stopping!")
+                set_ragebot_target(nil)
+                break
+            end
+
+            set_ragebot_target(closest_player)
+            print("[INFO] Targeting closest player: " .. closest_player.Name)
+
+            -- Monitor target's health and unassign once dead
+            local humanoid = closest_player.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+                    if humanoid.Health <= 0 then
+                        print("[INFO] Target eliminated: " .. closest_player.Name)
+                        set_ragebot_target(nil)
+                    end
+                end)
+            end
         else
-            health_label.Text = "Health: N/A"
+            set_ragebot_target(nil) -- No target found
         end
-    else
-        health_label.Text = "Health: Dead"
     end
-end
 
-local function on_character_added(new_character, target_player)
-    local humanoid = new_character:FindFirstChildOfClass("Humanoid")
-    if humanoid then
-        humanoid:GetPropertyChangedSignal("Health"):Connect(function()
-            update_health(target_player)
-        end)
-        update_health(target_player)
-    end
+    -- Cleanup when sentry mode is disabled
+    set_ragebot_target(nil)
+    set_legitbot_target(nil)
+    print("[INFO] Sentry mode disabled.")
 end
 
 -- >> Chat Command Listener
@@ -111,13 +180,18 @@ local function chat_listener(player)
             screen_gui:Destroy()
             run_service:Set3dRenderingEnabled(true)
             setfpscap(360)
-            print("Authorized user " .. player.Name .. " stopped the script!")
+            print("[INFO] Authorized user " .. player.Name .. " stopped the script!")
         end
 
         -- Target Change Command
         if args[1] == ".target" and args[2] and table.find(_G.Config.users, player.Name) then
             set_target_by_display_name(args[2])
-            print("Authorized user " .. player.Name .. " set target to " .. args[2])
+            print("[INFO] Authorized user " .. player.Name .. " set target to " .. args[2])
+        end
+
+        -- Sentry Mode Command
+        if args[1] == ".sentry" and table.find(_G.Config.users, player.Name) then
+            enable_sentry_mode(player)
         end
     end)
 end
@@ -136,6 +210,10 @@ set_target_by_display_name(_G.Config.target_display_name)
 -- >> Cleanup on Unload
 juju["on_unload"](function()
     set_ragebot_target(nil)
+    set_legitbot_target(nil)
     screen_gui:Destroy()
-    print("Ragebot target selection script unloaded.")
+    print("[INFO] Ragebot target selection script unloaded.")
 end)
+
+-- >> Initialize Optimization
+do_gfx()
